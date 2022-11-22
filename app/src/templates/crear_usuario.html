@@ -1,0 +1,85 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+
+<form class="w-50 pt-3 m-auto" method="post" action="/crear/usuario" autocomplete="off">
+    <fieldset>
+      <legend class="text-center">Registrar Nuevo Usuario</legend>
+      <div class="dropdown-divider"></div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <br>
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif%}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label for="username" class="form-label mt-4">Usuario</label>
+        <input type="number" required maxlength="10" max="9999999999" class="form-control fs-6" id="username" name="username" placeholder="Ingrese número de documento">
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-label mt-4">Contraseña por defecto</label>
+        <input type="password" required maxlength="20" class="form-control fs-6" aria-describedby="passHelp" id="password" name="password">
+        <small id="passHelp" class="form-text text-muted">El usuario podrá cambiar esta contraseña desde su perfil.</small>
+      </div>
+      <div class="form-group">
+        <label for="nombre_usuario" class="form-label mt-4">Nombre y Apellido</label>
+        <input type="text" required maxlength="100" class="form-control fs-6" id="nombre_usuario" name="nombre_usuario">
+      </div>
+      <div class="form-group">
+        <label for="correo_usuario" class="form-label mt-4">Correo Electrónico</label>
+        <input type="email" maxlength="60" class="form-control fs-6" id="correo_usuario" name="correo_usuario" aria-describedby="emailHelp">
+        <small id="emailHelp" class="form-text text-muted">Puede dejarlo vacío el usuario puede agregarlo después.</small>
+      </div>
+      <div class="form-group">
+        <label for="telefono_usuario" class="form-label mt-4">Telefono</label>
+        <input type="number" maxlength="10" max="9999999999" class="form-control fs-6" id="telefono_usuario" name="telefono_usuario" aria-describedby="telHelp">
+        <small id="telHelp" class="form-text text-muted">Puede dejarlo vacío, el usuario puede agregarlo después.</small>
+      </div>
+      <div class="dropdown-divider mt-3 mb-3"></div>
+      <legend class="fs-5 text-center">Preferencias</legend>  
+      <div class="dropdown-divider mt-3 mb-3"></div>
+      <div class="form-group">
+        <label for="rol_usuario" class="form-label mt-4">Rol del Usuario</label>
+        <select required class="form-select fs-6" id="rol_usuario" name="rol_usuario"> 
+          <option value="">-- Seleccione --</option>
+          <option value="1">Administrador</option>
+          <option value="2">Consultante</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="estado_usuario" class="form-label mt-4">Estado en el sistema</label>
+        <select required class="form-select fs-6" id="estado_usuario" name="estado_usuario">
+          <option value="">-- Seleccione --</option>
+          <option value="1">Activo</option>
+          <option value="0">Inactivo</option>
+        </select>
+      </div>
+      <div class="dropdown-divider mt-4 mb-4"></div>
+      <fieldset class="form-group mt-3 mb-3 text-center">
+        <button type="submit" class="btn btn-light fs-6 p-3 ps-5 pe-5 w-auto">Guardar Usuario</button>
+      </fieldset>
+
+  </form>
+
+{% endblock %}

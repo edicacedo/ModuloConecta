@@ -1,0 +1,134 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+{% if usuarios %}
+    
+    <div class="card mb-3 mt-3">
+      <h5 class="card-header text-center">Usuarios Registrados en el Sistema</h5>
+      {%if data.busqueda %}
+      <h6 class="card-header text-center">Resultados de la busqueda para: <em>'{{data.busqueda}}'</em></h6>
+      {% endif %}
+      <form class="d-flex" action="/lista_usuarios/search" method="post" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="form-control me-sm-2" type="text" placeholder="Datos del Usuario" name="search_input" required>
+          <button class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" type="submit"><i class="fa-solid fa-magnifying-glass me-3"></i><span>Buscar</span></button>
+          <a href="/lista_usuarios" class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" title="Reiniciar Busqueda"><i class="fa-solid fa-arrows-rotate"></i></a>
+        </form>
+    </div>
+    
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          <br>
+          {% for category, message in messages %}
+              {% if category == 'error' %}
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      <strong>{{ message }}</strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+              {% else %}
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <strong>{{ message }}</strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+              {% endif%}
+          {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Username</th>
+        <th scope="col">Nombres</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Telefono</th>
+        <th scope="col">Rol</th>
+        <th scope="col">Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+    <span class="d-block text-end me-1" style="font-size: 0.8rem;">Archivos Encontrados: {{usuarios|length}}</span>  
+    {% for usuario in usuarios %}
+      <tr class="table-active">
+        <th scope="row" class="p-1 pt-2 ps-3">{{usuario.1}}</th>
+        <th scope="row" class="p-1 pt-2 ps-3">{{usuario.2}}</th>
+        <td class="fw-bolder p-1 pt-2 ps-3">
+            {% if usuario.3 == "" %}
+                --
+            {% else %}
+                {{usuario.3}}
+            {% endif %}
+        </td>
+        <td class="p-1 pt-2 ps-3">
+            {% if usuario.4 == "" %}
+                --
+            {% else %}
+                {{usuario.4}}
+            {% endif %}
+        </td>
+        <td class="p-1 pt-2 ps-3">
+          {% if usuario.0 == current_user.id %}
+            {% if usuario.6 == "Administrador" %}
+            <a aria-disabled="true" class="btn btn-primary disabled btn-sm w-100" title="Cambiar Rol">Administrador</a>
+            {% else %}
+            <a aria-disabled="true" class="btn btn-secondary disabled btn-sm w-100" title="Cambiar Rol">Consultante</a>
+            {% endif %}
+          {% else %}
+            {% if usuario.6 == "Administrador" %}
+            <a href="/cambiar_rol/{{usuario.0}}/{{usuario.6}}" class="btn btn-primary btn-sm w-100" title="Cambiar Rol">Administrador</a>
+            {% else %}
+            <a href="/cambiar_rol/{{usuario.0}}/{{usuario.6}}" class="btn btn-secondary btn-sm w-100" title="Cambiar Rol">Consultante</a>
+            {% endif %}
+          {% endif %}
+        </td>
+        <td class="p-1 pt-2 ps-3">
+          {% if usuario.0 == current_user.id %}
+            {% if usuario.5 == "Activo" %}
+            <a aria-disabled="true" class="btn btn-success btn-sm disabled w-100" title="Cambiar Estado">Activo</a>
+            {% else %}
+            <a aria-disabled="true" class="btn btn-danger btn-sm disabled w-100" title="Cambiar Estado">Inactivo</a>
+            {% endif %}
+          {% else %}
+            {% if usuario.5 == "Activo" %}
+            <a href="/cambiar_estado/{{usuario.0}}/{{usuario.5}}" class="btn btn-success btn-sm w-100" title="Cambiar Estado">Activo</a>
+            {% else %}
+            <a href="/cambiar_estado/{{usuario.0}}/{{usuario.5}}" class="btn btn-danger btn-sm w-100" title="Cambiar Estado">Inactivo</a>
+            {% endif %}
+          {% endif%}
+        </td>
+        <td class="p-1 pt-2 ps-3">
+            <div class="d-flex justify-content-end">
+              {% if usuario.0 == current_user.id %}
+                <a aria-disabled="true" class="btn btn-danger btn-sm disabled"><i class="fa-solid fa-trash-can" title="Eliminar Usuario"></i></a>
+              {% else %}
+                <a href="/eliminar_usuario/{{usuario.0}}/{{usuario.5}}/{{usuario.6}}" onclick="return confirm('¿Está seguro de eliminar este usuario del sistema?')" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can" title="Eliminar Usuario"></i></a>
+              {% endif %}
+            </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="alert alert-danger mt-3 text-center" role="alert">
+      {% if data.busqueda %}
+       No se han encontrado resultados para: <span class="fst-italic">'{{data.busqueda}}'</span>
+      {% else %}
+       No se han encontrado usuarios registrados.
+      {% endif %}
+    </div>
+    <button type="button" class="btn btn-secondary fs-6 d-flex align-items-center p-3" onclick="javascript:window.history.back(-1);return false;"><i class="fa-solid fa-arrow-left me-3"></i><span class="me-3">Volver</span></button>
+  {% endif %}
+
+{% endblock %}

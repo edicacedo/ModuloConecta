@@ -1,0 +1,79 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+
+<form class="w-50 pt-3 m-auto" method="post" action="/editar/perfil/{{current_user.id}}" autocomplete="off">
+    <fieldset>
+      <legend class="text-center">Editar Información de Perfil</legend>
+      <div class="dropdown-divider"></div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <br>
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif%}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group row">
+        <label for="username" class="col-sm-2 col-form-label">Usuario</label>
+        <div class="col-sm-10">
+          <input type="text" readonly="" class="form-control-plaintext fs-6" id="username" value="{{ current_user.username }}" disabled>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="nombre_usuario" class="form-label mt-4">Nombre y Apellido</label>
+        <input type="text" required maxlength="100" class="form-control fs-6" id="nombre_usuario" name="nombre_usuario" placeholder="Ingrese su nombre y apellido" value="{{ current_user.nombre_usuario }}">
+        <label for="correo_usuario" class="form-label mt-4">Correo Electrónico</label>
+        <input type="email" required maxlength="60" class="form-control fs-6" id="correo_usuario" name="correo_usuario" aria-describedby="emailHelp" placeholder="Ingrese su correo electrónico" value="{{ current_user.correo_usuario }}">
+        <label for="telefono_usuario" class="form-label mt-4">Telefono</label>
+        <input type="number" required maxlength="10" max="9999999999" class="form-control fs-6" id="telefono_usuario" name="telefono_usuario" placeholder="Ingrese su teléfono" value="{{ current_user.telefono_usuario }}">
+        
+        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
+      </div>
+      <div class="dropdown-divider mt-3 mb-3"></div>
+      <div class="form-group row">
+        <label for="rol_usuario" class="col-sm-2 col-form-label">Rol</label>
+        <div class="col-sm-10">
+        {% if current_user.rol_usuario == 1 %}
+          <input type="text" readonly="" class="form-control-plaintext fs-6" id="rol_usuario" value="Administrador" disabled>
+        {% else %}
+          <input type="text" readonly="" class="form-control-plaintext fs-6" id="rol_usuario" value="Consultante" disabled>
+        {% endif %}
+        </div>
+
+        <label for="estado_usuario" class="col-sm-2 col-form-label">Estado</label>
+        <div class="col-sm-10">
+        {% if current_user.estado_usuario == 1 %}
+          <input type="text" readonly="" class="form-control-plaintext fs-6" id="estado_usuario" value="Activo" disabled>
+        {% else %}
+          <input type="text" readonly="" class="form-control-plaintext fs-6" id="estado_usuario" value="Inactivo" disabled>
+        {% endif %}
+        </div>
+      </div>
+      <div class="dropdown-divider mt-4 mb-4"></div>
+      <fieldset class="form-group mt-3 mb-3 text-center">
+        <button type="submit" class="btn btn-light fs-6 p-3 ps-5 pe-5 w-auto">Actualizar Datos</button>
+      </fieldset>
+
+  </form>
+
+{% endblock %}

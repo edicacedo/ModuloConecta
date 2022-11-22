@@ -1,0 +1,158 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    Historial de Cambios
+{% endblock %}
+
+{% block head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+    
+    <div class="card mb-3 mt-3">
+      <h5 class="card-header text-center">Historial de Cambios</h5>
+      <h6 class="alert alert-dismissible alert-info text-center">Utilice este módulo para realizar la busqueda de los documentos para ver el historial de cambios asociado a cada uno. Las versiones antiguas de documentos no estarán disponibles para descarga.</h6>
+      {% if data.busqueda %}
+      <h6 class="card-header text-center"><em>Valor buscado: '{{data.busqueda}}'</em></h6>
+      {% endif %}
+      
+      <form class="d-block d-sm-flex" action="/historial" method="post" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="d-block form-control d-sm-block" type="text" placeholder="Datos del Archivo" name="search_input" id="search_input">
+
+          <select class="form-select fs-6 d-sm-block" id="select_carpeta" name="select_carpeta">
+            <option value="">-- Macroproceso --</option>
+            {% for carpeta in carpetas %}
+            <option value="{{carpeta.0}}">{{carpeta.1}}</option>
+            {% endfor %}
+          </select>
+
+          <select class="form-select fs-6 d-sm-block" id="select_subcarpeta" name="select_subcarpeta">
+            <option value="">-- Proceso --</option>
+          </select>
+
+          <button class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" type="submit"><i class="fa-solid fa-magnifying-glass me-3"></i><span>Buscar</span></button>         
+      </form>
+    </div>
+{%if docs %}
+    
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Proceso</th>
+        <th scope="col">Subcarpeta</th>
+        <th scope="col">Archivo</th>
+        <th scope="col">Versión</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Estado</th>
+        <th scope="col" class="text-end">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+    <span class="d-block text-end me-1" style="font-size: 0.8rem;">Archivos Encontrados: {{docs|length}}</span>
+    {% for doc in docs %}
+      <tr class="table-active">
+        <th scope="row" class="p-1 pt-2 ps-3">{{doc.1}}</th>
+        <th scope="row" class="p-1 pt-2 ps-3">{{doc.2}}</th>
+        <td class="fw-bolder p-1 pt-2 ps-3">{{doc.3}}</td>
+        <td class="p-1 pt-2 ps-3">{{doc.5}}</td>
+        <td class="p-1 pt-2 ps-3">{{doc.4.strftime('%d/%m/%Y')}}</td>
+        <td class="p-1 pt-2 ps-3">
+          {% if doc.8 == 1 %}
+            <span class="badge rounded-pill bg-success w-100">Activo</span>
+          {% else %}
+            <span class="badge rounded-pill bg-danger w-100">Inactivo</span>
+          {% endif %}
+        </td>
+        <td class="p-1 pt-2 ps-3">
+            <div class="d-flex justify-content-end">
+              <a href="/static/archivos/{{doc.6}}/{{doc.7}}/{{doc.3}}" download="download" class="btn btn-success me-1 btn-sm"><i class="fa-solid fa-download" title="Descargar Archivo"></i></a>
+              <button class="btn btn-info ms-1 btn-sm" title="Ver Historial de Cambios"><i class="fa-solid fa-clock-rotate-left"></i></button>
+            </div>
+        </td>
+      </tr>
+      <tr style="display: none;">
+        <td colspan="7" class="p-1">
+          <table class="table table-striped">
+          <thead>
+            <tr class="table-success">
+              <th class="p-2 text-center" scope="col">Archivo</th>
+              <th class="p-2 text-center" scope="col">Versión</th>
+              <th class="p-2 text-center" scope="col">Fecha</th>
+              <th class="p-2 text-center" scope="col">Estado</th>
+              <th class="p-2 text-center" scope="col">Fecha de Cambio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cambio in cambios %}
+            {% if cambio.1 == doc.0 %}
+          <tr>
+            <td class="fw-bolder p-1 pt-2 ps-3">{{ cambio.4 }}</td>
+            <td class="p-1 pt-2 ps-3">{{ cambio.6 }}</td>
+            <td class="p-1 pt-2 ps-3">{{ cambio.5.strftime('%d/%m/%Y') }}</td>
+            <td class="p-1 pt-2 ps-3">{{ cambio.7 }}</td>
+            <td class="p-1 pt-2 ps-3 text-center">{{ cambio.8.strftime('%d/%m/%Y - %I:%M:%S %p') }}</td>
+          </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+          </table>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>  
+
+{% endif %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <br>
+        {% for category, message in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% else %}
+                <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif%}
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    select_carpeta = document.getElementById('select_carpeta')
+    select_subcarpeta = document.getElementById('select_subcarpeta')
+
+    select_carpeta.onchange = function(){
+        carpeta = select_carpeta.value;
+        fetch('subcarpeta/'+carpeta).then(function(response){
+            response.json().then(function(data){
+                opcionHTML = '<option value="">-- Seleccione --</option>'
+                for (subproceso of data.subprocesos){
+                    opcionHTML += '<option value="'+subproceso.id+'">'+subproceso.nombre+'</option>'
+                }
+                select_subcarpeta.innerHTML = opcionHTML
+            })
+        })
+    }
+
+    $('table button').click(function() {
+        var n = $(this).closest("tr").nextUntil("tr:has(button)");
+        n.toggle()
+      })
+  </script>
+{% endblock%}

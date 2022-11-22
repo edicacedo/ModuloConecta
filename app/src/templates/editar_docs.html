@@ -1,0 +1,218 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+
+<form class="w-50 pt-3 m-auto" method="post" action="/editar/archivo/{{documento.0}}/{{documento.6}}/{{documento.7}}/{{documento.3}}" autocomplete="off" enctype="multipart/form-data">
+    <fieldset>
+      <legend class="text-center">Actualizar Documento/Formato</legend>
+      <div class="dropdown-divider"></div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <br>
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif%}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div id="proceso_actual" style="display: inline;">
+            <div class="form-group">
+                <label for="carpeta" class="form-label mt-4">Macroproceso Actual</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control fs-6" disabled id="carpeta" value="{{documento.1}}">
+                    <!--<button type="button" onclick="show_carpetas()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="subcarpeta" class="form-label mt-4">Proceso Actual</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control fs-6" disabled id="subcarpeta" value="{{documento.2}}">
+                    <!-- <button type="button" onclick="show_carpetas()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>-->
+                </div>
+            </div>
+        </div>
+        <div id="procesos" style="display: none;">
+            <div class="form-group">
+                <label for="select_carpeta" class="form-label mt-4">Nuevo Macroproceso</label>
+                <div class="d-flex">
+                    <select class="form-select fs-6" id="select_carpeta" name="select_carpeta">
+                    <option value="">-- Seleccione --</option>
+                    {% for carpeta in carpetas %}
+                    <option value="{{carpeta.0}}">{{carpeta.1}}</option>
+                    {% endfor %}
+                    </select>
+                    <button type="button" onclick="show_carpetas()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="select_subcarpeta" class="form-label mt-4">Nuevo Proceso</label>
+                <div class="d-flex">
+                    <select class="form-select fs-6" id="select_subcarpeta" name="select_subcarpeta">
+                        <option value="">-- Seleccione --</option>
+                    </select>
+                    <button type="button" onclick="show_carpetas()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="archivo_actual" style="display: inline;" class="form-group">
+            <label for="actual" class="form-label mt-4">Documento Actual</label>
+            <div class="d-flex">
+                <a href="/static/archivos/{{documento.6}}/{{documento.7}}/{{documento.3}}" class="w-100 text-decoration-none" download="download" title="Descargar Archivo">
+                    <input type="text" style="cursor: pointer;" class="form-control fs-6 fs-bold" disabled id="actual" value="{{documento.3}}">
+                </a>
+                <button type="button" onclick="show_archivo()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+        </div>
+        <div class="form-group" style="display: none;" id="cont_archivo">
+            <label for="archivo" class="form-label mt-4">Nuevo Documento</label>
+            <div class="d-flex">
+                <input class="form-control fs-6" type="file" id="archivo" name="archivo" aria-describedby="helpfile">
+                <button type="button" onclick="show_archivo()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+            <small id="helpfile" class="form-text text-muted">Asegurese de nombrar correctamente el archivo, ya que se mostrará en el sistema.</small>
+        </div>
+        <div class="form-group" id="fecha_actual" style="display: inline;">
+            <label for="factual" class="form-label mt-4">Fecha Registrada</label>
+            <div class="d-flex">
+                <input type="text" class="form-control fs-6" disabled id="factual" value="{{documento.4.strftime('%d/%m/%Y')}}">
+                <button type="button" onclick="show_fecha()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+        </div>
+        <div class="form-group" id="cont_fecha" style="display: none;">
+            <label for="factual" class="form-label mt-4">Nueva Fecha</label>
+            <div class="d-flex">
+                <input type="date" class="form-control fs-6" id="fecha_archivo" name="fecha_archivo" value="{{documento.4}}" max="{{hoy}}" aria-describedby="helpfecha">
+                <button type="button" onclick="show_fecha()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+        </div>
+        <div class="form-group" id="estado_actual" style="display: inline;">
+            <label for="estado" class="form-label mt-4">Estado Actual</label>
+            <div class="d-flex">
+                <input type="text" class="form-control fs-6" disabled id="estado" value="{%if documento.8 == 1 %} Activo {% else %} Inactivo {% endif %}">
+                <button type="button" onclick="show_estado()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+        </div>
+        <div class="form-group" id="cont_estado" style="display: none;">
+            <label for="select_estado" class="form-label mt-4">Nuevo Estado</label>
+            <div class="d-flex">
+                <select class="form-select fs-6" id="select_estado" name="select_estado" aria-describedby="helpestado">
+                <option value="">-- Seleccione --</option>
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+                </select>
+                <button type="button" onclick="show_estado()" class="btn btn-info ms-1 btn-sm" title="Cambiar"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+            <small id="helpestado" class="form-text text-muted">Los documentos activos son publicados automáticamente.</small>
+          </div>
+          <div class="form-group mt-4 row">
+            <label for="version" class="col-sm-2 col-form-label">Versión</label>
+            <div class="col-sm-10">
+              <input type="text" readonly="" class="form-control-plaintext" id="version" name="version" value="{{documento.5}}">
+            </div>
+          </div>
+      
+      <div class="dropdown-divider mt-4 mb-4"></div>
+      <fieldset class="form-group mt-3 mb-3 text-center">
+        <button type="submit" class="btn btn-light fs-6 p-3 ps-5 pe-5 w-auto">Actualizar Documento</button>
+        <a type="a" href="/actualizar" class="btn btn-light fs-6 p-3 ps-5 pe-5 w-auto">Volver</a>
+    </fieldset>
+
+
+  </form>
+
+  <script>
+    select_carpeta = document.getElementById('select_carpeta')
+    select_subcarpeta = document.getElementById('select_subcarpeta')
+
+    select_carpeta.onchange = function(){
+        carpeta = select_carpeta.value;
+        fetch('subcarpeta/'+carpeta).then(function(response){
+            response.json().then(function(data){
+                opcionHTML = '<option value="">-- Seleccione --</option>'
+                for (subproceso of data.subprocesos){
+                    opcionHTML += '<option value="'+subproceso.id+'">'+subproceso.nombre+'</option>'
+                }
+                select_subcarpeta.innerHTML = opcionHTML
+            })
+        })
+    }
+
+
+    function show_carpetas(){
+        const procesos = document.getElementById('procesos')
+        const proceso_actual = document.getElementById('proceso_actual')
+        if (procesos.style.display == 'none'){
+            procesos.style.display = 'inline'
+            proceso_actual.style.display = 'none'
+            document.getElementById('select_carpeta').setAttribute('required','')
+            document.getElementById('select_subcarpeta').setAttribute('required','')
+        }else{
+            procesos.style.display = 'none'
+            proceso_actual.style.display = 'inline'
+            document.getElementById('select_carpeta').removeAttribute('required')
+            document.getElementById('select_subcarpeta').removeAttribute('required')
+        }
+    }
+
+    function show_archivo(){
+        const arch = document.getElementById('cont_archivo')
+        const actual = document.getElementById('archivo_actual')
+        if (arch.style.display == 'none'){
+            arch.style.display = 'inline'
+            actual.style.display = 'none'
+            document.getElementById('archivo').setAttribute('required','')
+        }else{
+            arch.style.display = 'none'
+            actual.style.display = 'inline'
+            document.getElementById('archivo').removeAttribute('required')
+        }
+    }
+
+    function show_estado(){
+        const estado = document.getElementById('cont_estado')
+        const estado_actual = document.getElementById('estado_actual')
+        if (estado.style.display == 'none'){
+            estado.style.display = 'inline'
+            estado_actual.style.display = 'none'
+            document.getElementById('select_estado').setAttribute('required','')
+        }else{
+            estado.style.display = 'none'
+            estado_actual.style.display = 'inline'
+            document.getElementById('select_estado').removeAttribute('required')
+        }
+    }
+
+    function show_fecha(){
+        const fecha = document.getElementById('cont_fecha')
+        const fecha_actual = document.getElementById('fecha_actual')
+        if (fecha.style.display == 'none'){
+            fecha.style.display = 'inline'
+            fecha_actual.style.display = 'none'
+            document.getElementById('fecha_archivo').setAttribute('required','')
+        }else{
+            fecha.style.display = 'none'
+            fecha_actual.style.display = 'inline'
+            document.getElementById('fecha_archivo').removeAttribute('required')
+        }
+    }
+  </script>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{{ url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/3077d3980c.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static',filename='img/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static',filename='img/favicon-16x16.png')}}">
+    {% block head %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static',filename='img/logo.webp')}}" alt="" width="100" height="56" class="d-inline-block align-text-middle">
+            Conec7a
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <div class="collapse navbar-collapse" id="navbarColor02">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link active" href="/">Inicio
+                  <span class="visually-hidden">(current)</span>
+                </a>
+              </li>
+              {% if current_user.rol_usuario == 1 %}
+              <li class="d-flex nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Administración</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/crear_usuario">Crear Usuario</a>
+                    <a class="dropdown-item" href="/lista_usuarios">Usuarios Registrados</a>
+                  </div>
+              </li>
+              <li class="d-flex nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Gestión de Documentos</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/subir_doc">Subir Documentos</a>
+                    <a class="dropdown-item" href="/actualizar">Actualizar Documentos</a>
+                    <a class="dropdown-item" href="/historial">Historial de Cambios</a>
+                  </div>
+              </li>
+              {% endif %}
+            </ul>
+            {% if current_user.id %}
+            <form class="d-block d-sm-flex" action="/listado/search" method="post" autocomplete="off">
+              <ul class="navbar-nav me-auto">
+                <li class="d-flex nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{% block nameuser %}{% endblock %}</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/editar_perfil">Editar Perfil</a>
+                    <a class="dropdown-item" href="/cambiar_pass">Cambiar Contraseña</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('ingreso.cerrar_sesion')}}">Cerrar Sesión</a>
+                  </div>
+              </li>
+              </ul>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input class="form-control me-sm-2" type="text" placeholder="Buscar Archivo" name="search_input" required>
+              <button class="btn btn-light my-2 my-sm-0 p-2 d-flex align-items-center me-3" type="submit"><i class="fa-solid fa-magnifying-glass me-3"></i><span>Buscar</span></button>  
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+
+    <div class="container pt-4">
+        {% block body %}
+        {% endblock %}
+    </div>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-4 border-top navbar-dark bg-dark mt-auto">
+        <div class="col-md-4 d-flex align-items-center">
+          <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+            <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+          </a>
+          <span class="text-muted">© 2022 Conec7a SAS</span>
+        </div>
+    
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex me-5">
+          <li class="ms-3"><a class="text-muted" href="#"><i class="fs-3 fa-brands fa-twitter"><use xlink:href="#twitter"></use></i></a></li>
+          <li class="ms-3"><a class="text-muted" href="#"><i class="fs-3 fa-brands fa-instagram"><use xlink:href="#instagram"></use></i></a></li>
+          <li class="ms-3"><a class="text-muted" href="#"><i class="fs-3 fa-brands fa-facebook"></i><use xlink:href="#facebook"></use></i></a></li>
+        </ul>
+      </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+    {% block script %}{% endblock %}
+</body>
+</html>

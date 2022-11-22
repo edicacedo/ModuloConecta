@@ -1,0 +1,97 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+
+<form class="w-50 pt-3 m-auto" method="post" action="/subir/archivo" autocomplete="off" enctype="multipart/form-data">
+    <fieldset>
+      <legend class="text-center">Subir Nuevo Documento/Formato</legend>
+      <div class="dropdown-divider"></div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <br>
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif%}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label for="select_carpeta" class="form-label mt-4">Macroproceso</label>
+            <select class="form-select fs-6" required id="select_carpeta" name="select_carpeta">
+              <option value="">-- Seleccione --</option>
+              {% for carpeta in carpetas %}
+              <option value="{{carpeta.0}}">{{carpeta.1}}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="select_subcarpeta" class="form-label mt-4">Proceso</label>
+            <select class="form-select fs-6" required id="select_subcarpeta" name="select_subcarpeta">
+                <option value="">-- Seleccione --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="archivo" class="form-label mt-4">Documento</label>
+            <input class="form-control fs-6" required type="file" id="archivo" name="archivo" aria-describedby="helpfile">
+            <small id="helpfecha" class="form-text text-muted">Asegurese de nombrar correctamente el archivo, ya que se mostrará en el sistema.</small>
+        </div>
+        <div class="form-group">
+            <label for="fecha_archivo" class="form-label mt-4">Fecha</label>
+            <input type="date" max="{{ hoy }}" value="{{ hoy }}" required class="form-control fs-6" id="fecha_archivo" name="fecha_archivo" aria-describedby="helpfecha">
+            <small id="helpfecha" class="form-text text-muted">Fecha en la que fue cargado el documento.</small>
+        </div>
+        <div class="form-group">
+            <label for="select_estado" class="form-label mt-4">Estado del Archivo</label>
+            <select class="form-select fs-6" required id="select_estado" name="select_estado" aria-describedby="helpestado">
+              <option value="">-- Seleccione --</option>
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+            <small id="helpestado" class="form-text text-muted">Los documentos activos son publicados automáticamente.</small>
+          </div>
+        
+      
+      <div class="dropdown-divider mt-4 mb-4"></div>
+      <fieldset class="form-group mt-3 mb-3 text-center">
+        <button type="submit" class="btn btn-light fs-6 p-3 ps-5 pe-5 w-auto">Guardar Archivo</button>
+      </fieldset>
+
+  </form>
+
+  <script>
+    select_carpeta = document.getElementById('select_carpeta')
+    select_subcarpeta = document.getElementById('select_subcarpeta')
+
+    select_carpeta.onchange = function(){
+        carpeta = select_carpeta.value;
+        fetch('subcarpeta/'+carpeta).then(function(response){
+            response.json().then(function(data){
+                opcionHTML = '<option value="">-- Seleccione --</option>'
+                for (subproceso of data.subprocesos){
+                    opcionHTML += '<option value="'+subproceso.id+'">'+subproceso.nombre+'</option>'
+                }
+                select_subcarpeta.innerHTML = opcionHTML
+            })
+        })
+    }
+  </script>
+
+{% endblock %}

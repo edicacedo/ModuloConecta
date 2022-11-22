@@ -1,0 +1,117 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+{% if docs %}
+    {% if data.encabezado %}
+    <div class="card mb-3 mt-2">
+        <h5 class="card-header text-center">{{data.encabezado.1}}</h5>
+        {%if data.sub %}
+        <h6 class="card-header text-center">{{data.encabezado.2}}</h6>
+        {% endif %}
+        {% if data.sub %}
+        <form class="d-flex" action="/listado/sortsub/search/{{data.encabezado.5}}" method="post" autocomplete="off">
+        {% else %}
+        <form class="d-flex" action="/listado/sort/search/{{data.encabezado.5}}" method="post" autocomplete="off">
+        {% endif%}  
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="form-control me-sm-2" type="text" placeholder="Nombre de Archivo" name="search_input" required>
+          <button class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" type="submit"><i class="fa-solid fa-magnifying-glass me-3"></i><span>Buscar</span></button>
+          
+          {% if data.sub %}
+            <a href="/listado/sub/{{data.encabezado.5}}" class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" title="Reiniciar Busqueda"><i class="fa-solid fa-arrows-rotate"></i></a>
+          {% else %}
+            <a href="/listado/{{data.encabezado.5}}" class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" title="Reiniciar Busqueda"><i class="fa-solid fa-arrows-rotate"></i></a>
+          {% endif %}
+        
+        </form>
+    </div>
+    {% else %}
+    <div class="card mb-3 mt-3">
+      <h5 class="card-header text-center">Resultados de la Busqueda</h5>
+      <h6 class="card-header text-center"><em>'{{data.busqueda}}'</em></h6>
+      <form class="d-flex" action="/listado/search" method="post" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="form-control me-sm-2" type="text" placeholder="Datos del Archivo" name="search_input" id="search_input" required>
+          <button class="btn btn-outline-dark my-2 my-sm-0 d-flex align-items-center" type="submit"><i class="fa-solid fa-magnifying-glass me-3"></i><span>Buscar</span></button>         
+      </form>
+    </div>
+    {% endif %}
+<table class="table table-hover">
+    <thead>
+      <tr>
+        {% if data.busqueda %}
+        <th scope="col">Proceso</th>
+        {%endif %}
+        {%if not(data.sub) %}
+        <th scope="col">Subcarpeta</th>
+        {% endif %}
+        <th scope="col">
+          {% if data.sub %}
+            <a class="text-decoration-none text-dark" title="Ordenar por nombre" href="/listado/sortsub/file/{{data.encabezado.5}}">Archivo</a>
+          {% elif data.busqueda %}
+            Archivo
+          {% else %}
+          <a class="text-decoration-none text-dark" title="Ordenar por nombre" href="/listado/sort/file/{{data.encabezado.5}}">Archivo</a>
+          {% endif %}
+        </th>
+        <th scope="col">Versión</th>
+        <th scope="col">
+          {% if data.sub %}
+            <a class="text-decoration-none text-dark" title="Ordenar por fecha" href="/listado/sortsub/date/{{data.encabezado.5}}">Fecha</a>
+          {% elif data.busqueda %}
+            Fecha
+          {% else %}
+            <a class="text-decoration-none text-dark" title="Ordenar por fecha" href="/listado/sort/date/{{data.encabezado.5}}">Fecha</a>
+          {% endif %}
+        </th>
+        <th scope="col" class="text-end">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+    <span class="d-block text-end me-1" style="font-size: 0.8rem;">Archivos Encontrados: {{docs|length}}</span>
+    {% for doc in docs %}
+      <tr class="table-active">
+        {% if data.busqueda %}
+        <th scope="row" class="p-1 pt-2 ps-3">{{doc.1}}</th>
+        {% endif %}
+        {%if not(data.sub) %}
+        <th scope="row" class="p-1 pt-2 ps-3">{{doc.2}}</th>
+        {% endif %}
+        <td class="fw-bolder p-1 pt-2 ps-3">{{doc.3}}</td>
+        <td class="p-1 pt-2 ps-3">{{doc.5}}</td>
+        <td class="p-1 pt-2 ps-3">{{doc.4.strftime('%d/%m/%Y')}}</td>
+        <td class="p-1 pt-2 ps-3">
+            <div class="d-flex justify-content-end">
+              <a href="/static/archivos/{{doc.6}}/{{doc.7}}/{{doc.3}}" download="download" class="btn btn-success me-1 btn-sm"><i class="fa-solid fa-download" title="Descargar Archivo"></i></a>
+              {% if current_user.rol_usuario == 1 %}
+                <a href="/editar_docs/{{doc.0}}" class="btn btn-info me-1 btn-sm"><i class="fa-solid fa-pen-to-square" title="Editar Archivo"></i></a>
+                <a onclick="return confirm('¿Está seguro de eliminar este documento?')" href="/eliminar_documento/{{doc.0}}/{{doc.6}}/{{doc.7}}/{{doc.3}}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can" title="Eliminar Archivo"></i></a>
+              {% endif %}
+            </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="alert alert-danger mt-3 text-center" role="alert">
+      {% if data.busqueda %}
+       No se han encontrado resultados para: <span class="fst-italic">'{{data.busqueda}}'</span>
+      {% else %}
+       No se han encontrado archivos en esta carpeta.
+      {% endif %}
+    </div>
+    <button type="button" class="btn btn-secondary fs-6 d-flex align-items-center p-3" onclick="javascript:window.history.back(-1);return false;"><i class="fa-solid fa-arrow-left me-3"></i><span class="me-3">Volver</span></button>
+  {% endif %}
+{% endblock %}

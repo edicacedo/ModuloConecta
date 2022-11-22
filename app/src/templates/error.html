@@ -1,0 +1,13 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    Página no encontrada
+{% endblock %}
+
+{% block body %}
+    <div class="alert alert-danger mt-3 text-center fs-6" role="alert">
+        La página solicitada no ha podido ser encontrada.
+    </div>
+  <button type="button" class="btn btn-secondary fs-6 d-flex align-items-center p-3" onclick="javascript:window.history.back(-1);return false;"><i class="fa-solid fa-arrow-left me-3"></i><span class="me-3">Volver</span></button>
+
+{% endblock %}

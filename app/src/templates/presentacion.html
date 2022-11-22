@@ -1,0 +1,142 @@
+{% extends './layout.html' %}
+
+{% block title %}
+    {{data.titulo}}
+{% endblock %}
+{% block head %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/maphilight/1.4.0/jquery.maphilight.min.js"></script>
+    <script src="{{url_for('static',filename='js/circle-menu.js')}}"></script>
+{% endblock %}
+
+{% block nameuser %}
+  {{ current_user.nombre_usuario }}
+{% endblock %}
+
+{% block body %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card border-secondary mt-3 pb-0">
+            <div class="card-header text-center fs-3">Bienvenido</div>
+            <div class="card-body">
+              <h4 class="card-title text-center mt-2 fs-5">MÓDULO DE FORMATOS Y CONTROL DE VERSIONADO DE EVALUACIÓN Y SEGUIMIENTO</h4>
+              <div class="dropdown-divider mt-2 mb-2"></div>
+              <p class="card-text fs-6 text-center"><h4 class="card-title text-center mt-2 fs-6">MISIÓN</h4>La Personería Municipal de Cota es un Órgano de Control que garantiza los derechos humanos, la observancia de las normas vigila de manera responsable la conducta de los servidores, el patrimonio y la gestión pública; interviene de manera eficiente en la materialización de los derechos y el cumplimiento de los deberes, para la preservación de la paz, el orden jurídico y social de la comunidad Cotense.</p>
+              <p class="card-text fs-6 text-center"><h4 class="card-title text-center mt-2 fs-6">VISIÓN</h4>Para el año 2024, la Personería Municipal de Cota se reconocerá por ser un Órgano de Control, moderno, visible y cercano a la comunidad, protagonista en la construcción del ciudadano, líder en la defensa de los derechos humanos, la vigilancia del patrimonio, la gestión pública y la sostenibilidad ambiental, en garantía de los intereses de los Cotenses.</p>
+            </div>
+            <div class="card-footer alert alert-warning mb-0 d-none d-md-block">
+              <p class="card-text fs-6 text-center">Para navegar por los diferentes formatos registrados, use el <span class="fw-bold">Mapa de Procesos Interactivo</span> a continuación</p>
+            </div>
+            <div class="card-footer alert alert-warning mb-0 d-block d-md-none">
+              <p class="card-text fs-6 text-center">Para navegar por los diferentes formatos registrados, use el <span class="fw-bold">Listado de Procesos</span> a continuación.</p>
+            </div>
+          </div>
+      </div>
+      <div class="col-sm-12 d-none d-md-block">
+            <center>
+              <img src="{{ url_for('static',filename='img/menu.jpg')}}" usemap="#image-map" style="height :1000px; width: 1000px" class="map">
+            </center>
+            
+            <map name="image-map">
+                <area target="_blank" alt="Personería Municipal de Cota" title="Personería Municipal de Cota" href="http://www.personeria-municipal-cota.gov.co/" coords="500,500,142" shape="circle">
+                <area target="" alt="Proceso de Apoyo" title="Proceso de Apoyo" href="/listado/1" coords="379,266,413,387,442,370,468,361,489,357,512,357,537,361,561,369,580,381,598,395,615,413,630,437,640,466,644,495,643,522,638,546,726,627,742,592,749,568,753,546,756,518,757,496,755,472,752,451,745,421,733,392,722,371,705,348,692,330,674,313,652,293,630,279,605,265,578,255,546,245,515,241,488,240,455,242,426,248,401,257" shape="poly">
+                <area target="" alt="Proceso Estratégico" title="Proceso Estratégico" href="/listado/2" coords="635,546,725,627,716,643,708,655,698,668,687,681,671,697,660,706,649,716,633,727,606,743,578,754,552,761,523,766,496,769,465,767,435,762,408,754,382,745,361,733,346,724,329,714,415,614,430,625,444,631,462,637,481,640,502,642,520,641,538,638,560,631,576,621,594,609,608,594,619,580,630,560" shape="poly">
+                <area target="" alt="Proceso Misional" title="Proceso Misional" href="/listado/3" coords="415,616,329,714,313,697,302,686,290,673,279,658,269,643,260,628,248,607,242,590,237,572,233,549,229,525,228,504,230,481,232,460,235,440,242,417,250,398,258,381,266,368,275,354,285,338,301,321,314,307,329,295,342,285,355,276,365,270,378,264,413,385,400,398,391,408,383,419,375,430,368,445,363,458,359,477,358,494,359,513,361,531,367,547,372,561,381,575,386,586,398,600" shape="poly">
+                <area target="" alt="Proceso de Evaluación" title="Proceso de Evaluación" href="/listado/4" coords="494,170,493,238,521,239,543,243,561,247,579,253,597,260,614,269,629,276,644,285,659,296,671,309,686,322,700,338,710,352,720,366,728,381,736,396,743,414,748,432,753,454,756,474,757,491,757,509,756,528,753,546,751,561,747,577,742,593,736,610,727,626,716,645,704,663,692,678,679,690,666,703,649,716,630,731,613,740,591,750,566,758,549,763,530,766,515,769,505,769,503,841,516,841,529,839,544,837,558,835,575,831,593,827,612,820,630,813,646,805,664,797,677,788,696,775,713,762,726,749,738,738,749,725,760,714,769,701,781,683,789,669,798,653,803,641,812,619,817,603,821,586,826,566,829,544,831,518,832,493,830,471,825,442,820,422,813,402,806,382,799,365,789,349,778,328,761,304,750,290,730,269,713,254,693,237,675,224,658,212,632,198,610,188,583,180,559,175,526,171" shape="poly">
+                <area target="" alt="Control Interno" title="Control Interno" href="/listado/5" coords="493,169,492,238,475,239,461,239,445,242,430,245,413,251,401,255,384,261,367,267,350,277,331,290,314,305,299,320,282,341,271,359,256,383,246,402,238,426,232,453,230,479,228,504,230,531,233,553,237,575,245,599,256,620,267,640,281,661,295,680,314,697,329,714,347,725,369,738,391,749,416,756,439,763,466,767,485,769,505,770,502,840,489,841,474,840,461,839,444,836,428,833,404,827,388,822,372,816,357,810,340,801,323,792,306,780,293,770,281,761,269,751,255,736,243,723,229,705,220,692,207,673,199,658,191,645,185,628,178,610,173,596,166,571,163,549,160,526,159,503,161,481,162,460,166,440,169,420,178,396,187,374,196,352,205,334,216,319,229,298,240,284,254,270,266,259,280,248,293,238,306,227,322,217,347,202,379,190,402,183,439,174" shape="poly">
+                <area target="" alt="Gestión Talento Humano" title="Gestión Talento Humano" href="/listado/sub/1" coords="335,105,361,193,387,186,405,180,422,175,439,172,449,171,462,159,453,76,424,80,398,84,366,93" shape="poly">
+                <area target="" alt="Gestión Financiera" title="Gestión Financiera" href="/listado/sub/2" coords="454,75,463,158,451,171,467,170,483,169,499,168,517,169,535,171,550,173,557,174,568,165,599,84,576,79,553,76,529,74,507,73,482,73" shape="poly">
+                <area target="" alt="Gestión Contractual" title="Gestión Contractual" href="/listado/sub/3" coords="600,83,569,165,560,174,572,176,584,179,597,184,609,188,622,195,632,198,646,205,665,217,676,206,719,134,701,123,680,113,641,97" shape="poly">
+                <area target="" alt="Gestión Documental" title="Gestión Documental" href="/listado/sub/4" coords="719,134,677,204,666,216,677,225,689,233,702,242,715,254,727,266,741,280,752,289,764,280,820,217,808,203,794,190,761,162" shape="poly">
+                <area target="" alt="Gestión Administrativa" title="Gestión Administrativa" href="/listado/sub/5" coords="821,218,761,282,752,290,761,304,769,312,776,324,784,336,789,347,795,357,802,366,812,357,889,322,878,300,862,275,842,247" shape="poly">
+                <area target="" alt="Gestión Jurídica" title="Gestión Jurídica" href="/listado/sub/6" coords="890,322,813,357,802,366,808,383,812,396,816,410,819,421,824,432,827,444,829,458,832,476,842,471,924,453,922,433,918,413,913,392,904,359" shape="poly">
+                <area target="" alt="Gestión TIC - Comunicaciones" title="Gestión TIC - Comunicaciones" href="/listado/sub/7" coords="925,454,841,472,832,475,832,488,833,499,832,516,831,531,830,545,827,565,823,580,818,599,813,619,807,634,801,649,795,662,786,682,852,742,862,729,872,712,881,694,890,675,898,654,906,634,912,612,918,586,923,562,925,533,927,501" shape="poly">
+                <area target="" alt="Direccionamiento Estratégico" title="Direccionamiento Estratégico" href="/listado/sub/8" coords="785,683,852,743,843,755,835,766,823,781,811,793,800,805,786,816,776,825,760,838,750,846,738,854,719,867,703,875,688,882,678,894,662,902,644,908,625,916,612,920,594,925,581,927,570,930,549,934,560,923,549,839,565,835,581,831,599,826,614,820,630,814,646,807,661,799,677,788,692,778,704,769,717,758,727,747,741,733,754,718,764,707,775,696" shape="poly">
+                <area target="" alt="Sistema de Gestión de Calidad" title="Sistema de Gestión de Calidad" href="/listado/sub/9" coords="550,837,560,922,550,933,530,936,511,937,496,937,481,937,464,936,448,935,431,933,416,931,399,928,382,923,363,919,345,913,325,905,307,897,290,889,274,879,257,869,245,861,233,853,223,845,288,768,299,775,309,783,319,791,333,798,348,808,361,814,375,820,391,825,406,830,424,834,441,837,459,839,480,842,499,842,526,840" shape="poly">
+                <area target="" alt="Promoción Derechos Humanos" title="Promoción Derechos Humanos" href="/listado/sub/10" coords="288,765,222,844,206,831,191,817,177,803,162,784,150,770,137,752,127,736,116,719,109,706,103,693,98,682,110,672,192,647,201,661,207,673,213,685,223,699,234,714,250,731,268,750,277,758" shape="poly">
+                <area target="" alt="Función Disciplinaria" title="Función Disciplinaria" href="/listado/sub/11" coords="191,647,109,673,98,682,92,668,88,658,84,645,78,628,74,613,71,599,68,583,66,564,64,548,62,533,63,516,63,496,73,487,159,487,158,504,159,520,161,537,163,553,167,571,170,593,177,613,184,632" shape="poly">
+                <area target="" alt="Servicio Ciudadano" title="Servicio Ciudadano" href="/listado/sub/12" coords="162,486,71,486,63,494,64,473,66,459,67,443,70,428,73,412,77,396,82,381,87,367,93,354,97,341,102,330,109,317,119,307,201,338,192,358,183,373,178,388,171,410,166,430,164,447,161,466" shape="poly">
+                <area target="" alt="Atención Victima Conflicto Armado" title="Atención Victima Conflicto Armado" href="/listado/sub/13" coords="108,315,117,301,127,290,135,278,142,267,155,250,164,236,178,219,189,208,198,197,212,185,228,170,247,156,264,145,280,134,298,124,314,117,334,107,361,193,341,203,326,211,310,222,293,234,277,247,259,264,243,280,228,298,214,318,208,330,202,338,122,308" shape="poly">
+            </map>  
+      </div>
+      <div class="col-sm-12 d-block d-md-none">
+        <div class="card mb-3 mt-3">
+            <h3 class="card-header text-center">Lista de Procesos</h3>
+        </div>
+        <div class="accordion mt-1 mb-5" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button collapsed fs-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                 PROCESO DE APOYO
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div class="accordion-body fs-5">
+                <a href="/listado/1" class="text-decoration-none fs-4 d-block text-center mb-3">Ver toda la carpeta</a>
+                <div class="d-grid gap-1">
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/1">GESTIÓN TALENTO HUMANO</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/2">GESTIÓN FINANCIERA</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/3">GESTIÓN CONTRACTUAL</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/4">GESTIÓN DOCUMENTAL</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/5">GESTIÓN ADMINISTRATIVA</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/6">GESTIÓN JURÍDICA</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/7">GESTIÓN TIC - COMUNICACIONES</a>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed fs-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                PROCESO ESTRATÉGICO
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+              <div class="accordion-body fs-5">
+                <a href="/listado/2" class="text-decoration-none fs-4 d-block text-center mb-3">Ver toda la carpeta</a>
+                <div class="d-grid gap-1">
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/7">DIRECCIONAMIENTO ESTRATÉGICO</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/8">SISTEMA DE GESTIÓN DE CALIDAD</a>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed fs-4 text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                PROCESO MISIONAL
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+              <div class="accordion-body fs-5">
+                <a href="/listado/3" class="text-decoration-none fs-4 d-block text-center mb-3">Ver toda la carpeta</a>
+                <div class="d-grid gap-1">
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/9">PROMOCIÓN DERECHOS HUMANOS</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/10">FUNCIÓN DISCIPLINARIA</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/11">SERVICIO CIUDADANO</a>
+                  <a class="btn btn-lg btn-outline-light" href="/listado/sub/12">ATENCIÓN VICTIMA CONFLICTO ARMADO</a>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <a href="/listado/4" class="text-decoration-none">
+            <div class="accordion-item">
+                <h2 class="accordion-button collapsed fs-4 text-dark">PROCESO DE EVALUACIÓN</h2>
+            </div>
+          </a>
+          <a href="/listado/5" class="text-decoration-none">
+            <div class="accordion-item">
+                <h2 class="accordion-button collapsed fs-4 text-dark">CONTROL INTERNO</h2>
+            </div>
+          </a>
+        </div>        
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
